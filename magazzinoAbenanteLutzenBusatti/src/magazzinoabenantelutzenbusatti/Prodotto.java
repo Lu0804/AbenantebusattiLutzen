@@ -9,5 +9,11 @@ package magazzinoabenantelutzenbusatti;
  * @author abenante.lucia
  */
 public class Prodotto {
-    
+    private int Id;
+    private String nome;
+    private int prezzoVendita;
+    private int prezzoAcquisto;
+    private int scorta;
+    private int scortaMin;
+    private int nVenduti;
 }
