@@ -119,7 +119,7 @@ public class frmMagazzino extends javax.swing.JFrame {
         jTabbedPane1.setForeground(new java.awt.Color(255, 0, 0));
         jTabbedPane1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Inserimento/Modifica Prodotto", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("ID Prodotto");
@@ -223,7 +223,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(21, 21, 21))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Elenco Prodotti Completo", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -291,7 +291,7 @@ public class frmMagazzino extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Gestione Prodotti", jPanel1);
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Statistiche Generali Magazzino", null, null, new java.awt.Font("Segoe UI", 1, 18), null)); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 204, 0));
@@ -326,7 +326,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 322, Short.MAX_VALUE)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9)
                     .addComponent(jLabel11))
@@ -366,7 +366,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(26, 26, 26))
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "️Allarmi Scorte (Da Riordinare) ", null, null, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "️Allarmi Scorte (Da Riordinare) ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
 
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
