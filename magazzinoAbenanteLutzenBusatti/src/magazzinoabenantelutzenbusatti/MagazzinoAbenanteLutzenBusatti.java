@@ -14,8 +14,10 @@ public class MagazzinoAbenanteLutzenBusatti {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-     frmMagazzino fm=new frmMagazzino();
-     fm.setVisible(true);
+        
+        
+        frmMagazzino fm=new frmMagazzino();
+        fm.setVisible(true);
     }
     
 }
