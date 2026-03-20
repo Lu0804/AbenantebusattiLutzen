@@ -127,7 +127,7 @@ public class frmMagazzino extends javax.swing.JFrame {
         jTabbedPane1.setForeground(new java.awt.Color(255, 0, 0));
         jTabbedPane1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Inserimeto/Modifica prodotto", 0, 0, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114)));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(45, 45, 45));
@@ -234,7 +234,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(lblScorteMinime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAggiungi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -245,7 +245,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(21, 21, 21))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114))); // NOI18N
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Elenco Prodotti Completo", 0, 0, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114)));
 
         tblGenerale.setBackground(new java.awt.Color(204, 204, 204));
         tblGenerale.setModel(new javax.swing.table.DefaultTableModel(
@@ -315,7 +315,7 @@ public class frmMagazzino extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Gestione Prodotti", jPanel1);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(null));
+        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(40, 167, 69));
@@ -391,7 +391,9 @@ public class frmMagazzino extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(jLabel10)
                     .addComponent(lblValoreMagazzino)
-                    .addComponent(lblProdottiDiversi))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lblProdottiDiversi)))
                 .addGap(68, 68, 68)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTotPezzi)
@@ -442,7 +444,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(36, 36, 36))
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114))); // NOI18N
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Allarmi Scorte (Da Riordinare)", 0, 0, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114)));
 
         jTable4.setBackground(new java.awt.Color(204, 204, 204));
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
@@ -465,7 +467,7 @@ public class frmMagazzino extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(337, Short.MAX_VALUE))
+                .addContainerGap(351, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
