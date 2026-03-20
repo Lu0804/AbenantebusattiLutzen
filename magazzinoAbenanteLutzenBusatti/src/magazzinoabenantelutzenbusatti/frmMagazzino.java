@@ -68,10 +68,10 @@ public class frmMagazzino extends javax.swing.JFrame {
         lblProdottiDiversi = new javax.swing.JLabel();
         lblTotPezzi = new javax.swing.JLabel();
         lblValoreMagazzino = new javax.swing.JLabel();
-        lblProfitto = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        tblAllarmeScorte = new javax.swing.JTable();
+        jTable4 = new javax.swing.JTable();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -119,36 +119,50 @@ public class frmMagazzino extends javax.swing.JFrame {
         jTabbedPane1.setForeground(new java.awt.Color(255, 0, 0));
         jTabbedPane1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114))); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(45, 45, 45));
         jLabel1.setText("ID Prodotto");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(45, 45, 45));
         jLabel2.setText("Nome Prodotto");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(45, 45, 45));
         jLabel3.setText("Prezzo Acquisto");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(45, 45, 45));
         jLabel4.setText("Prezzo Vendita");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(45, 45, 45));
         jLabel5.setText("Numero Scorte");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(45, 45, 45));
         jLabel6.setText("Scorte Minime");
 
+        btnPulisciCampi.setBackground(new java.awt.Color(108, 117, 125));
         btnPulisciCampi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnPulisciCampi.setForeground(new java.awt.Color(255, 255, 255));
         btnPulisciCampi.setText("PULISCI CAMPI");
 
+        btnElimina.setBackground(new java.awt.Color(217, 83, 79));
         btnElimina.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnElimina.setForeground(new java.awt.Color(255, 255, 255));
         btnElimina.setText("ELIMINA");
 
+        btnAggiungi.setBackground(new java.awt.Color(17, 122, 139));
         btnAggiungi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAggiungi.setForeground(new java.awt.Color(255, 255, 255));
         btnAggiungi.setText("AGGIUNGI");
 
+        btnSalvaModifiche.setBackground(new java.awt.Color(17, 122, 139));
         btnSalvaModifiche.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnSalvaModifiche.setForeground(new java.awt.Color(255, 255, 255));
         btnSalvaModifiche.setText("SALVA MODIFICHE");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -180,9 +194,9 @@ public class frmMagazzino extends javax.swing.JFrame {
                             .addComponent(btnElimina, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnAggiungi, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnPulisciCampi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnPulisciCampi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(21, 21, 21))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -223,8 +237,9 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(21, 21, 21))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114))); // NOI18N
 
+        tblGenerale.setBackground(new java.awt.Color(204, 204, 204));
         tblGenerale.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -239,6 +254,7 @@ public class frmMagazzino extends javax.swing.JFrame {
         jScrollPane2.setViewportView(tblGenerale);
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(45, 45, 45));
         jLabel7.setText("Cerca");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -294,28 +310,32 @@ public class frmMagazzino extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(null));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(0, 204, 0));
+        jLabel8.setForeground(new java.awt.Color(40, 167, 69));
         jLabel8.setText("Prodotti Diversi");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(0, 204, 0));
+        jLabel9.setForeground(new java.awt.Color(40, 167, 69));
         jLabel9.setText("Totale Pezzi In Magazzino");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(0, 204, 0));
+        jLabel10.setForeground(new java.awt.Color(40, 167, 69));
         jLabel10.setText("Valore Magazzino €");
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(0, 204, 0));
+        jLabel11.setForeground(new java.awt.Color(40, 167, 69));
         jLabel11.setText("Margine Profittuale Potenziale €");
 
+        lblProdottiDiversi.setForeground(new java.awt.Color(0, 31, 63));
         lblProdottiDiversi.setText("jLabel12");
 
+        lblTotPezzi.setForeground(new java.awt.Color(0, 31, 63));
         lblTotPezzi.setText("jLabel13");
 
+        lblValoreMagazzino.setForeground(new java.awt.Color(0, 31, 63));
         lblValoreMagazzino.setText("jLabel14");
 
-        lblProfitto.setText("jLabel15");
+        jLabel15.setForeground(new java.awt.Color(0, 31, 63));
+        jLabel15.setText("jLabel15");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -341,7 +361,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(130, 130, 130)
                 .addComponent(lblValoreMagazzino)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblProfitto)
+                .addComponent(jLabel15)
                 .addGap(247, 247, 247))
         );
         jPanel6Layout.setVerticalGroup(
@@ -362,13 +382,14 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(40, 40, 40)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblValoreMagazzino)
-                    .addComponent(lblProfitto))
+                    .addComponent(jLabel15))
                 .addGap(26, 26, 26))
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null, null, null, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114))); // NOI18N
 
-        tblAllarmeScorte.setModel(new javax.swing.table.DefaultTableModel(
+        jTable4.setBackground(new java.awt.Color(204, 204, 204));
+        jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -379,7 +400,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 "ID Prodotto", "Nome Prodotto", "Giacenza Attuale", "Scorta Attuale"
             }
         ));
-        jScrollPane5.setViewportView(tblAllarmeScorte);
+        jScrollPane5.setViewportView(jTable4);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -467,6 +488,7 @@ public class frmMagazzino extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -490,6 +512,7 @@ public class frmMagazzino extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTable4;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField lblCerca;
     private javax.swing.JTextField lblID;
@@ -498,11 +521,11 @@ public class frmMagazzino extends javax.swing.JFrame {
     private javax.swing.JTextField lblPrezzoAcquisto;
     private javax.swing.JTextField lblPrezzoVendita;
     private javax.swing.JLabel lblProdottiDiversi;
-    private javax.swing.JLabel lblProfitto;
     private javax.swing.JTextField lblScorteMinime;
     private javax.swing.JLabel lblTotPezzi;
     private javax.swing.JLabel lblValoreMagazzino;
-    private javax.swing.JTable tblAllarmeScorte;
     private javax.swing.JTable tblGenerale;
     // End of variables declaration//GEN-END:variables
+
 }
+
