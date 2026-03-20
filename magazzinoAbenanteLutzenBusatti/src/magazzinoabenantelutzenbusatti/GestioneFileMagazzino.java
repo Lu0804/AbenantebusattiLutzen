@@ -22,7 +22,7 @@ public class GestioneFileMagazzino {
     private static final String FILE_MAGAZZINO = "elencoProdotti.pdm";
     private Controllo c=new Controllo();
     
-    public boolean creaFileStudente() {
+    public boolean creaFileProdotti() {
         try (RandomAccessFile file = new RandomAccessFile(FILE_MAGAZZINO, "rw")) {
             int nRecord = (int) (file.length() / DIM_RECORD);
             System.out.println("File studenti creato/aperto con successo.");
@@ -52,7 +52,7 @@ public class GestioneFileMagazzino {
         }
     }
     
-    public boolean leggiStudente(int posizione) {
+    public boolean leggiProdotti(int posizione) {
         try (RandomAccessFile file = new RandomAccessFile(FILE_MAGAZZINO, "r")) {
             long posizioneByte = (long) (posizione - 1) * DIM_RECORD;
             if (posizioneByte >= file.length()) {
