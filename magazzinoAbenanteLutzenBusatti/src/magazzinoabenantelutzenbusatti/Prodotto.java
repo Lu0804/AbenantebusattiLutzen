@@ -9,13 +9,13 @@ package magazzinoabenantelutzenbusatti;
  * @author abenante.lucia
  */
 public class Prodotto {
-    private int Id;
-    private String nome;
-    private int prezzoVendita;
-    private int prezzoAcquisto;
-    private int scorta;
-    private int scortaMin;
-    private int nVenduti;
+    private int Id;//i del prodotto
+    private String nome; // nome del prodotto
+    private int prezzoVendita; // prezzo di vendita
+    private int prezzoAcquisto; // prezzo d'acquiato
+    private int scorta; // scorte attuali
+    private int scortaMin; //scorte minime, sotto non ci può andare  
+    private int nVenduti; // prodotto venduto di più 
 
     public Prodotto(int Id, String nome, int prezzoVendita, int prezzoAcquisto, int scorta, int scortaMin, int nVenduti) {
         this.Id = Id;
@@ -27,6 +27,8 @@ public class Prodotto {
         this.nVenduti = nVenduti;
     }
 
+    
+    //Get & Set
     public int getId() {
         return Id;
     }
@@ -88,8 +90,7 @@ public class Prodotto {
         int hash = 3;
         hash = 89 * hash + this.Id;
         return hash;
-    }
-
+    } 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
