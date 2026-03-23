@@ -3,18 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package magazzinoabenantelutzenbusatti;
-
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 /**
  *
  * @author abenante.lucia
  */
-public class Statistica {
-
-    
-    public void prodottoPiuVenduto(){
-        
-    } 
-    
+public class GestioneFileKey {
     
     
 }
