@@ -50,7 +50,7 @@ public class frmMagazzino extends javax.swing.JFrame {
         lblPrezzoVendita = new javax.swing.JTextField();
         lblNumeroScorte = new javax.swing.JTextField();
         lblScorteMinime = new javax.swing.JTextField();
-        btnPulisciCampi = new javax.swing.JButton();
+        btnCerca = new javax.swing.JButton();
         btnElimina = new javax.swing.JButton();
         btnAggiungi = new javax.swing.JButton();
         btnSalvaModifiche = new javax.swing.JButton();
@@ -153,25 +153,45 @@ public class frmMagazzino extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(45, 45, 45));
         jLabel6.setText("Scorte Minime");
 
-        btnPulisciCampi.setBackground(new java.awt.Color(108, 117, 125));
-        btnPulisciCampi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnPulisciCampi.setForeground(new java.awt.Color(255, 255, 255));
-        btnPulisciCampi.setText("PULISCI CAMPI");
+        btnCerca.setBackground(new java.awt.Color(108, 117, 125));
+        btnCerca.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnCerca.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerca.setText("CERCA");
+        btnCerca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCercaActionPerformed(evt);
+            }
+        });
 
         btnElimina.setBackground(new java.awt.Color(217, 83, 79));
         btnElimina.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnElimina.setForeground(new java.awt.Color(255, 255, 255));
         btnElimina.setText("ELIMINA");
+        btnElimina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminaActionPerformed(evt);
+            }
+        });
 
         btnAggiungi.setBackground(new java.awt.Color(17, 122, 139));
         btnAggiungi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnAggiungi.setForeground(new java.awt.Color(255, 255, 255));
         btnAggiungi.setText("AGGIUNGI");
+        btnAggiungi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAggiungiActionPerformed(evt);
+            }
+        });
 
         btnSalvaModifiche.setBackground(new java.awt.Color(17, 122, 139));
         btnSalvaModifiche.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnSalvaModifiche.setForeground(new java.awt.Color(255, 255, 255));
         btnSalvaModifiche.setText("SALVA MODIFICHE");
+        btnSalvaModifiche.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvaModificheActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -204,7 +224,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnPulisciCampi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnCerca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(21, 21, 21))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -241,7 +261,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnElimina, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPulisciCampi, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCerca, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21))
         );
 
@@ -418,11 +438,12 @@ public class frmMagazzino extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel12)
-                    .addComponent(jLabel17))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel8)
+                        .addComponent(jLabel17)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTotPezzi)
@@ -513,6 +534,22 @@ public class frmMagazzino extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAggiungiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAggiungiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAggiungiActionPerformed
+
+    private void btnEliminaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEliminaActionPerformed
+
+    private void btnSalvaModificheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvaModificheActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSalvaModificheActionPerformed
+
+    private void btnCercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCercaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCercaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -540,8 +577,8 @@ public class frmMagazzino extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAggiungi;
+    private javax.swing.JButton btnCerca;
     private javax.swing.JButton btnElimina;
-    private javax.swing.JButton btnPulisciCampi;
     private javax.swing.JButton btnSalvaModifiche;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

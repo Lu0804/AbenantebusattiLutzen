@@ -195,7 +195,7 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="btnSalvaModifiche" max="32767" attributes="0"/>
-                                      <Component id="btnPulisciCampi" max="32767" attributes="0"/>
+                                      <Component id="btnCerca" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               </Group>
@@ -244,7 +244,7 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="btnElimina" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                              <Component id="btnPulisciCampi" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                              <Component id="btnCerca" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       </Group>
@@ -330,7 +330,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="lblScorteMinime">
                 </Component>
-                <Component class="javax.swing.JButton" name="btnPulisciCampi">
+                <Component class="javax.swing.JButton" name="btnCerca">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="7d" green="75" red="6c" type="rgb"/>
@@ -341,8 +341,11 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="PULISCI CAMPI"/>
+                    <Property name="text" type="java.lang.String" value="CERCA"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCercaActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btnElimina">
                   <Properties>
@@ -357,6 +360,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="ELIMINA"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEliminaActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btnAggiungi">
                   <Properties>
@@ -371,6 +377,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="AGGIUNGI"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAggiungiActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btnSalvaModifiche">
                   <Properties>
@@ -385,6 +394,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="SALVA MODIFICHE"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSalvaModificheActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -594,11 +606,13 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel9" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel12" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
