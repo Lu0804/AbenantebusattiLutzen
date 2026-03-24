@@ -460,7 +460,7 @@
                             <Column editable="true" title="P.Acquisto" type="java.lang.Object"/>
                             <Column editable="true" title="P.Vendita" type="java.lang.Object"/>
                             <Column editable="true" title="Giacenza" type="java.lang.Object"/>
-                            <Column editable="true" title="scorta minima" type="java.lang.Object"/>
+                            <Column editable="true" title="Scorta Minima" type="java.lang.Object"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -572,10 +572,7 @@
                               <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
                               <Component id="lblValoreMagazzino" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="lblProdottiDiversi" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="lblProdottiDiversi" alignment="0" min="-2" pref="52" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -591,7 +588,7 @@
                               <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="111" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                               <Component id="lblPiuCostoso" min="-2" max="-2" attributes="0"/>
@@ -615,11 +612,13 @@
                               </Group>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblTotPezzi" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblPiuVenduto" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblPiuCostoso" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblProdottiDiversi" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lblTotPezzi" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblPiuVenduto" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblPiuCostoso" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="lblProdottiDiversi" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="67" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -693,7 +692,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel12"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblTotPezzi">
@@ -704,7 +703,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel13"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblValoreMagazzino">
@@ -715,7 +714,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel14"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel15">
@@ -726,7 +725,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel15"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel12">
@@ -759,7 +758,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel14"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblMenoVenduto">
@@ -770,7 +769,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel16"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel17">
@@ -803,7 +802,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jlabel21"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblPiuCostoso">
@@ -814,7 +813,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="72" green="3a" red="4" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="jLabel20"/>
+                    <Property name="text" type="java.lang.String" value="..."/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -862,8 +861,8 @@
                           <Table columnCount="4" rowCount="4">
                             <Column editable="true" title="ID Prodotto" type="java.lang.Object"/>
                             <Column editable="true" title="Nome Prodotto" type="java.lang.Object"/>
-                            <Column editable="true" title="Giacenza Attuale" type="java.lang.Object"/>
                             <Column editable="true" title="Scorta Attuale" type="java.lang.Object"/>
+                            <Column editable="true" title="Scorta Minima" type="java.lang.Object"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

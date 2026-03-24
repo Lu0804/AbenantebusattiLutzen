@@ -1,242 +1,197 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package magazzinoabenantelutzenbusatti;
+
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+
 /**
+ * Gestisce il file testo delle chiavi: chiavi.txt
  *
- * @author abenante.lucia
+ * Ogni riga ha il formato:  id,posizione
+ * Esempio:
+ *   1,0
+ *   2,1
+ *   5,2
+ *
+ * "posizione" è l'indice record (0-based) nel file elencoProdotti.pdm.
+ * Una riga con id = -1 indica un record cancellato (tombstone).
  */
 public class GestioneFileKey {
-    private static final String FILE_PRODOTTI = "prodotti.txt";
-    private Magazzino m=new Magazzino() ;
 
-    // ── INIZIALIZZAZIONE ──────────────────────────────────────
+    private static final String FILE_KEY      = "chiavi.txt";
+    private static final int    ID_CANCELLATO = -1;
+
+    // ── CREAZIONE / APERTURA ──────────────────────────────────
 
     /**
-     * Carica tutte le iscrizioni dal file nell'oggetto Id.
-     * Da chiamare all'avvio del programma.
+     * Crea o apre il file chiavi.txt. Stampa quante chiavi contiene.
      */
-    public void inizializza() {
-        caricaIscrizioni();
+    public boolean creaFileKey() {
+        File f = new File(FILE_KEY);
+        try {
+            if (!f.exists()) f.createNewFile();
+            int nChiavi = leggiTutteLeRighe().size();
+            System.out.println("File chiavi aperto. Chiavi presenti: " + nChiavi);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Errore apertura file chiavi: " + e.getMessage());
+            return false;
+        }
     }
 
-    // ── AGGIUNGI / RIMUOVI ────────────────────────────────────
+    // ── SCRITTURA ─────────────────────────────────────────────
 
     /**
-     * Aggiunge un'iscrizione: controlla duplicati in memoria,
-     * scrive sul file e aggiorna Id.
+     * Aggiunge una coppia (id, posizione) nel file chiavi.
+     * Riutilizza uno slot cancellato (id=-1) se disponibile,
+     * altrimenti aggiunge una nuova riga in fondo.
+     *
+     * @param id        id del prodotto
+     * @param posizione posizione nel file principale (0-based)
+     * @return true se riuscito
      */
-    public boolean aggiungiProdotto(int id, int locazione) {
-        if (m.esisteIdProdotto(id)) {
-            System.out.println("Iscrizione già esistente: " + id);
+    public boolean aggiungiChiave(int id, int posizione) {
+        // Controlla duplicato
+        if (cercaPosizionePerID(id) >= 0) {
+            System.out.println("Chiave già esistente per id: " + id);
             return false;
         }
 
-        boolean ok = scriviRiga(id, locazione);
-        if (ok) {
-            m.aggiungiIscrizione(matricola, idGita);
-        }
-        return ok;
-    }
-
-    /**
-     * Rimuove un'iscrizione dal file e aggiorna Id in memoria.
-     */
-    public boolean rimuoviIscrizione(int matricola, int idGita) {
-        boolean ok = eliminaRiga(matricola, idGita);
-        if (ok) {
-            id.rimuoviIscrizione(matricola, idGita);
-        }
-        return ok;
-    }
-
-    /**
-     * Rimuove dal file TU TTE le righe che riguardano una certa gita (es. quando si elimina la gita).
-     * Fa UNA SOLA riscrittura del file invece di una per ogni studente.
-     * Aggiorna anche la memoria (Id).
-     *
-     * @param idGita la gita da rimuovere completamente dalle iscrizioni
-     * @return numero di righe rimosse
-     */
-    public int rimuoviTutteIscrizioniGita(int idGita) {
         ArrayList<String> righe = leggiTutteLeRighe();
-        ArrayList<String> righeRimaste = new ArrayList<>();
-        int rimossi = 0;
 
-        for (String riga : righe) {
-            String[] parti = riga.split(",");
-            if (parti.length == 2 && parti[1].trim().equals(String.valueOf(idGita))) {
-                // Questa riga appartiene alla gita da eliminare: la scartiamo
-                int matricola = Integer.parseInt(parti[0].trim());
-                id.rimuoviIscrizione(matricola, idGita);
-                rimossi++;
-            } else {
-                righeRimaste.add(riga);
+        // Cerca uno slot cancellato da riutilizzare
+        for (int i = 0; i < righe.size(); i++) {
+            String[] parti = righe.get(i).split(",");
+            if (parti.length == 2 && Integer.parseInt(parti[0].trim()) == ID_CANCELLATO) {
+                righe.set(i, id + "," + posizione);
+                scriviTutteLeRighe(righe);
+                System.out.println("Chiave aggiunta (slot riutilizzato): id=" + id + " → posizione=" + posizione);
+                return true;
             }
         }
 
-        // Riscrive il file UNA SOLA VOLTA con le righe rimaste
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PRODOTTI, false))) {
-            for (String riga : righeRimaste) {
-                bw.write(riga);
-                bw.newLine();
-            }
+        // Nessuno slot libero: aggiunge in fondo
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_KEY, true))) {
+            bw.write(id + "," + posizione);
+            bw.newLine();
+            System.out.println("Chiave aggiunta: id=" + id + " → posizione=" + posizione);
+            return true;
         } catch (IOException e) {
-            System.out.println("Errore riscrittura file: " + e.getMessage());
+            System.out.println("Errore scrittura chiave: " + e.getMessage());
+            return false;
         }
-
-        System.out.println("Rimosse " + rimossi + " iscrizioni per la gita " + idGita);
-        return rimossi;
-    }
-
-    /**
-     * Rimuove dal file TUTTE le righe che riguardano uno studente (es. quando si elimina lo studente).
-     * Fa UNA SOLA riscrittura del file.
-     * Aggiorna anche la memoria (Id).
-     *
-     * @param matricola lo studente da rimuovere completamente dalle iscrizioni
-     * @return numero di righe rimosse
-     */
-    public int rimuoviTutteIscrizioniStudente(int matricola) {
-        ArrayList<String> righe = leggiTutteLeRighe();
-        ArrayList<String> righeRimaste = new ArrayList<>();
-        int rimossi = 0;
-
-        for (String riga : righe) {
-            String[] parti = riga.split(",");
-            if (parti.length == 2 && parti[0].trim().equals(String.valueOf(matricola))) {
-                // Questa riga appartiene allo studente da eliminare: la scartiamo
-                int idGita = Integer.parseInt(parti[1].trim());
-                id.rimuoviIscrizione(matricola, idGita);
-                rimossi++;
-            } else {
-                righeRimaste.add(riga);
-            }
-        }
-
-        // Riscrive il file UNA SOLA VOLTA con le righe rimaste
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PRODOTTI, false))) {
-            for (String riga : righeRimaste) {
-                bw.write(riga);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Errore riscrittura file: " + e.getMessage());
-        }
-
-        System.out.println("Rimosse " + rimossi + " iscrizioni per lo studente " + matricola);
-        return rimossi;
     }
 
     // ── LETTURA ───────────────────────────────────────────────
 
     /**
-     * Restituisce il set delle gite a cui è iscritto uno studente.
-     * Legge direttamente dalla HashMap in memoria.
+     * Dato un id, restituisce la posizione del prodotto nel file principale.
+     *
+     * @param idCercato id da cercare
+     * @return posizione (0-based) nel file principale, oppure -1 se non trovato
      */
-    public HashSet<Integer> getGitePerStudente(int id) {
-        return m.getId();
-    }
-
-    /**
-     * Restituisce il set delle matricole iscritte a una gita.
-     * Scorre la HashMap per trovare tutti gli studenti che contengono idGita.
-     */
-    public HashSet<Integer> getStudentiPerGita(int idGita) {
-        HashSet<Integer> studenti = new HashSet<>();
-        for (int matricola : id.getMatricole()) {
-            if (id.getGitePerStudente(matricola).contains(idGita)) {
-                studenti.add(matricola);
-            }
-        }
-        return studenti;
-    }
-
-    /** Espone l'oggetto Id */
-    public Id getId() {
-        return id;
-    }
-
-    /**
-     * Stampa tutte le righe del file (utile per debug).
-     */
-    public void stampaIscrizioni() {
-        ArrayList<String> righe = leggiTutteLeRighe();
-
-        if (righe.isEmpty()) {
-            System.out.println("Nessuna iscrizione nel file.");
-            return;
-        }
-
-        System.out.println("--- Iscrizioni (" + righe.size() + ") ---");
-        for (int i = 0; i < righe.size(); i++) {
-            String[] parti = righe.get(i).split(",");
-            System.out.println("  [" + (i + 1) + "] Matricola: " + parti[0] + " -> Gita ID: " + parti[1]);
-        }
-    }
-
-    // ── METODI PRIVATI ────────────────────────────────────────
-
-    /** Scrive una riga "matricola,idGita" in fondo al file. */
-    private boolean scriviRiga(int id, int locazione) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PRODOTTI, true))) {
-            bw.write(id + "," + locazione);
-            bw.newLine();
-            System.out.println("Scritto: " + id + "," + locazione);
-            return true;
-        } catch (IOException e) {
-            System.out.println("Errore scrittura: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /** Elimina la riga corrispondente a (matricola, idGita) e riscrive il file. */
-    private boolean eliminaRiga(int matricola, int idGita) {
-        ArrayList<String> righe = leggiTutteLeRighe();
-        boolean trovata = righe.remove(matricola + "," + idGita);
-
-        if (!trovata) {
-            System.out.println("Record non trovato: " + matricola + "," + idGita);
-            return false;
-        }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PRODOTTI, false))) {
-            for (String riga : righe) {
-                bw.write(riga);
-                bw.newLine();
-            }
-            System.out.println("Eliminato: " + matricola + "," + idGita);
-            return true;
-        } catch (IOException e) {
-            System.out.println("Errore eliminazione: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /** Carica il file in Id (usato da inizializza). */
-    private void caricaIscrizioni() {
+    public int cercaPosizionePerID(int idCercato) {
         for (String riga : leggiTutteLeRighe()) {
             String[] parti = riga.split(",");
             if (parti.length == 2) {
-                try {
-                    int matricola = Integer.parseInt(parti[0].trim());
-                    int idGita    = Integer.parseInt(parti[1].trim());
-                    id.aggiungiIscrizione(matricola, idGita);
-                } catch (NumberFormatException e) {
-                    System.out.println("Riga non valida ignorata: " + riga);
-                }
+                int id  = Integer.parseInt(parti[0].trim());
+                int pos = Integer.parseInt(parti[1].trim());
+                if (id == idCercato) return pos;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Stampa tutte le righe del file chiavi (utile per debug).
+     */
+    public void stampaTutteLeChiavi() {
+        ArrayList<String> righe = leggiTutteLeRighe();
+        if (righe.isEmpty()) {
+            System.out.println("File chiavi vuoto.");
+            return;
+        }
+        System.out.println("=== File chiavi (" + righe.size() + " righe) ===");
+        for (int i = 0; i < righe.size(); i++) {
+            String[] parti = righe.get(i).split(",");
+            int id  = Integer.parseInt(parti[0].trim());
+            int pos = Integer.parseInt(parti[1].trim());
+            if (id == ID_CANCELLATO) {
+                System.out.println("[" + i + "] --- cancellato ---");
+            } else {
+                System.out.println("[" + i + "] id=" + id + " → posizione=" + pos);
             }
         }
     }
+
+    // ── CANCELLAZIONE ─────────────────────────────────────────
+
+    /**
+     * Cancella logicamente la chiave: sovrascrive l'id con -1 mantenendo la posizione.
+     *
+     * @param idDaRimuovere id da cancellare
+     * @return true se trovato e cancellato
+     */
+    public boolean rimuoviChiave(int idDaRimuovere) {
+        ArrayList<String> righe = leggiTutteLeRighe();
+        boolean trovato = false;
+
+        for (int i = 0; i < righe.size(); i++) {
+            String[] parti = righe.get(i).split(",");
+            if (parti.length == 2 && Integer.parseInt(parti[0].trim()) == idDaRimuovere) {
+                righe.set(i, ID_CANCELLATO + "," + parti[1].trim()); // tombstone
+                trovato = true;
+                break;
+            }
+        }
+
+        if (!trovato) {
+            System.out.println("ID " + idDaRimuovere + " non trovato nel file chiavi.");
+            return false;
+        }
+
+        scriviTutteLeRighe(righe);
+        System.out.println("Chiave id=" + idDaRimuovere + " rimossa.");
+        return true;
+    }
+
+    // ── AGGIORNA POSIZIONE ────────────────────────────────────
+
+    /**
+     * Aggiorna la posizione associata a un id.
+     *
+     * @param id             id del prodotto
+     * @param nuovaPosizione nuova posizione nel file principale
+     * @return true se riuscito
+     */
+    public boolean aggiornaPosizioneChiave(int id, int nuovaPosizione) {
+        ArrayList<String> righe = leggiTutteLeRighe();
+        boolean trovato = false;
+
+        for (int i = 0; i < righe.size(); i++) {
+            String[] parti = righe.get(i).split(",");
+            if (parti.length == 2 && Integer.parseInt(parti[0].trim()) == id) {
+                righe.set(i, id + "," + nuovaPosizione);
+                trovato = true;
+                break;
+            }
+        }
+
+        if (!trovato) {
+            System.out.println("ID " + id + " non trovato nel file chiavi.");
+            return false;
+        }
+
+        scriviTutteLeRighe(righe);
+        System.out.println("Posizione aggiornata: id=" + id + " → " + nuovaPosizione);
+        return true;
+    }
+
+    // ── PRIVATI ───────────────────────────────────────────────
 
     /** Legge tutte le righe non vuote dal file. */
     private ArrayList<String> leggiTutteLeRighe() {
         ArrayList<String> righe = new ArrayList<>();
-        File file = new File(FILE_PRODOTTI);
+        File file = new File(FILE_KEY);
         if (!file.exists()) return righe;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -245,10 +200,20 @@ public class GestioneFileKey {
                 if (!riga.trim().isEmpty()) righe.add(riga.trim());
             }
         } catch (IOException e) {
-            System.out.println("Errore lettura file: " + e.getMessage());
+            System.out.println("Errore lettura file chiavi: " + e.getMessage());
         }
-
         return righe;
     }
-    
+
+    /** Riscrive tutto il file con le righe fornite (sovrascrittura completa). */
+    private void scriviTutteLeRighe(ArrayList<String> righe) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_KEY, false))) {
+            for (String riga : righe) {
+                bw.write(riga);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Errore riscrittura file chiavi: " + e.getMessage());
+        }
+    }
 }
