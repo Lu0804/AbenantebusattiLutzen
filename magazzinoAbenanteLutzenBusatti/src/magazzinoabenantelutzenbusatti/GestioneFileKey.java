@@ -2,8 +2,9 @@ package magazzinoabenantelutzenbusatti;
 
 import java.io.*;
 import java.util.ArrayList;
-
 /**
+ *
+ * @author abenante.lucia
  * Gestisce il file testo delle chiavi: chiavi.txt
  *
  * Ogni riga ha il formato:  id,posizione
@@ -95,7 +96,9 @@ public class GestioneFileKey {
             if (parti.length == 2) {
                 int id  = Integer.parseInt(parti[0].trim());
                 int pos = Integer.parseInt(parti[1].trim());
+                if (id == ID_CANCELLATO) continue;
                 if (id == idCercato) return pos;
+                
             }
         }
         return -1;

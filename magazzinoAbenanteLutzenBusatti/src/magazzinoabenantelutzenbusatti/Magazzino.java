@@ -109,9 +109,6 @@ public class Magazzino {
     public void setMagazzino(HashMap<Integer, HashSet<Prodotto>> magazzino) {
         this.magazzino = magazzino;
     }
-
-    
-    
-    
+   
     
 }

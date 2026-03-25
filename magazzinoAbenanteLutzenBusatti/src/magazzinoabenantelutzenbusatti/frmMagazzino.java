@@ -11,14 +11,32 @@ package magazzinoabenantelutzenbusatti;
 public class frmMagazzino extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmMagazzino.class.getName());
+// Qui dichiari la Logica — unico punto di contatto con tutta la business logic
+private Logica l = new Logica();
 
+// Qui dichiari il modello dinamico della tabella per poter aggiungere/rimuovere righe
+private javax.swing.table.DefaultTableModel modelTabella;
     /**
      * Creates new form frmMagazzino
      */
     public frmMagazzino() {
-        initComponents();
-    }
+    initComponents();
+    l.inizializza();
 
+    // Qui crei il modello tabella con le 6 colonne e 0 righe iniziali,
+    // sovrascrivendo il modello statico generato da NetBeans
+    modelTabella = new javax.swing.table.DefaultTableModel(
+        new String[]{"ID Prodotto", "Nome Prodotto", "P.Acquisto",
+                     "P.Vendita", "Giacenza", "Scorta Minima"}, 0
+    ) {
+        // Qui blocchi la modifica diretta delle celle dall'utente
+        @Override
+        public boolean isCellEditable(int row, int column) { return false; }
+    };
+
+    // Qui assegni il modello dinamico alla tblGenerale
+    tblGenerale.setModel(modelTabella);
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,6 +72,8 @@ public class frmMagazzino extends javax.swing.JFrame {
         btnElimina = new javax.swing.JButton();
         btnAggiungi = new javax.swing.JButton();
         btnSalvaModifiche = new javax.swing.JButton();
+        btnVendi = new javax.swing.JButton();
+        btnCompra = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblGenerale = new javax.swing.JTable();
@@ -193,6 +213,26 @@ public class frmMagazzino extends javax.swing.JFrame {
             }
         });
 
+        btnVendi.setBackground(new java.awt.Color(217, 83, 79));
+        btnVendi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVendi.setForeground(new java.awt.Color(255, 255, 255));
+        btnVendi.setText("VENDI");
+        btnVendi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVendiActionPerformed(evt);
+            }
+        });
+
+        btnCompra.setBackground(new java.awt.Color(17, 122, 139));
+        btnCompra.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnCompra.setForeground(new java.awt.Color(255, 255, 255));
+        btnCompra.setText("COMPRA");
+        btnCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompraActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -216,15 +256,22 @@ public class frmMagazzino extends javax.swing.JFrame {
                             .addComponent(lblPrezzoVendita)
                             .addComponent(lblNumeroScorte)
                             .addComponent(lblScorteMinime, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
-                        .addContainerGap(40, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(btnElimina, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAggiungi, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(btnVendi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnElimina, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnAggiungi, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(102, 102, 102)))
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCerca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnCerca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(21, 21, 21))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -254,10 +301,14 @@ public class frmMagazzino extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(lblScorteMinime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAggiungi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAggiungi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVendi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnElimina, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -308,7 +359,7 @@ public class frmMagazzino extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(lblCerca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -318,10 +369,10 @@ public class frmMagazzino extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -534,21 +585,76 @@ public class frmMagazzino extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAggiungiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAggiungiActionPerformed
-        // TODO add your handling code here:
+           // Qui deleghi tutta la validazione e l'inserimento alla Logica
+    String esito = l.aggiungiProdotto(
+        lblID.getText().trim(),
+        lblNomeProdotto.getText().trim(),
+        lblPrezzoAcquisto.getText().trim(),
+        lblPrezzoVendita.getText().trim(),
+        lblNumeroScorte.getText().trim(),
+        lblScorteMinime.getText().trim(),
+        modelTabella
+    );
+
+    // Qui mostri il messaggio ripulito dal prefisso OK/ERRORE
+    mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
+
+    // Qui pulisci i campi solo se l'operazione è andata a buon fine
+    if (esito.startsWith("OK")) {
+        lblID.setText("");
+        lblNomeProdotto.setText("");
+        lblPrezzoAcquisto.setText("");
+        lblPrezzoVendita.setText("");
+        lblNumeroScorte.setText("");
+        lblScorteMinime.setText("");
+    }
+
     }//GEN-LAST:event_btnAggiungiActionPerformed
 
     private void btnEliminaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminaActionPerformed
-        // TODO add your handling code here:
+        // Qui passi alla Logica la riga selezionata e il modello tabella
+    String esito = l.eliminaProdotto(tblGenerale.getSelectedRow(), modelTabella);
+    mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
     }//GEN-LAST:event_btnEliminaActionPerformed
 
     private void btnSalvaModificheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvaModificheActionPerformed
-        // TODO add your handling code here:
+        // Qui deleghi il salvataggio su file alla Logica
+    String esito = l.salvaTutti(modelTabella);
+    mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
     }//GEN-LAST:event_btnSalvaModificheActionPerformed
 
     private void btnCercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCercaActionPerformed
-        // TODO add your handling code here:
+        // Qui chiedi alla Logica la stringa formattata con i dettagli del prodotto selezionato
+    String dettagli = l.getDettagliProdotto(tblGenerale.getSelectedRow(), modelTabella);
+
+    if (dettagli == null) {
+        // Qui avvisi se nessuna riga era selezionata
+        mostraMessaggio("Seleziona un prodotto dalla tabella per vederne i dettagli.");
+        return;
+    }
+
+    // Qui mostri la scheda prodotto con il nome come titolo del dialog
+    String nome = (String) modelTabella.getValueAt(tblGenerale.getSelectedRow(), 1);
+    javax.swing.JOptionPane.showMessageDialog(this, dettagli,
+        "Scheda Prodotto - " + nome, javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnCercaActionPerformed
 
+    private void btnVendiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendiActionPerformed
+         frmScorte fms=new frmScorte();
+        fms.setVisible(true);
+    }//GEN-LAST:event_btnVendiActionPerformed
+
+    private void btnCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompraActionPerformed
+        frmScorte fms=new frmScorte();
+        fms.setVisible(true);
+    }//GEN-LAST:event_btnCompraActionPerformed
+/**
+ * Qui mostri un JOptionPane standard, come nel progetto di esempio.
+ * Così non ripeti la stessa riga in ogni handler.
+ */
+private void mostraMessaggio(String msg) {
+    javax.swing.JOptionPane.showMessageDialog(this, msg);
+}
     /**
      * @param args the command line arguments
      */
@@ -577,8 +683,10 @@ public class frmMagazzino extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAggiungi;
     private javax.swing.JButton btnCerca;
+    private javax.swing.JButton btnCompra;
     private javax.swing.JButton btnElimina;
     private javax.swing.JButton btnSalvaModifiche;
+    private javax.swing.JButton btnVendi;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
