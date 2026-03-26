@@ -11,12 +11,42 @@ package magazzinoabenantelutzenbusatti;
 public class frmScorte extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmScorte.class.getName());
+    
+    // Qui dichiari le variabili per memorizzare il risultato
+    private int quantita = 0;
+    private boolean confermato = false;
+    private String tipoOperazione = ""; // "VENDI" o "COMPRA"
+    private String nomeProdotto = "";
 
     /**
      * Creates new form frmScorte
      */
-    public frmScorte() {
+    public frmScorte(String tipoOperazione, String nomeProdotto) {
+        this.tipoOperazione = tipoOperazione;
+        this.nomeProdotto = nomeProdotto;
         initComponents();
+        
+       // Qui imposti il titolo in base all'operazione
+        if (tipoOperazione.equals("VENDI")) {
+            setTitle("Vendita Prodotto - " + nomeProdotto);
+            jLabel1.setText("Quante scorte di " + nomeProdotto);
+            jLabel2.setText(" vuoi VENDERE?");
+        } else {
+            setTitle("Acquisto Prodotto - " + nomeProdotto);
+            jLabel1.setText("Quante scorte di " + nomeProdotto);
+            jLabel2.setText(" vuoi COMPRARE?");
+        }
+        
+        // Qui rendi il dialog modale (blocca il frame principale fino alla chiusura)
+        setModal();
+    }
+    
+    /**
+     * Rende il frame modale usando setAlwaysOnTop
+     */
+    private void setModal() {
+        setAlwaysOnTop(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -103,32 +133,56 @@ public class frmScorte extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNumeroActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        // Qui validi l'input e chiudi il dialog
+         try {
+            quantita = Integer.parseInt(txtNumero.getText().trim());
+            if (quantita <= 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "La quantità deve essere maggiore di zero!", 
+                    "Errore", 
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            confermato = true;
+            dispose(); // Chiudi il dialog
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Inserisci un numero valido!", 
+                "Errore", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnOKActionPerformed
+
+    // ── GETTER PER RECUPERARE I DATI ─────────────────────────
+    
+   /**
+     * Restituisce la quantità inserita dall'utente
+     */
+    public int getQuantita() {
+        return quantita;
+    }
+    
+    /**
+     * Restituisce true se l'utente ha confermato (premuto OK)
+     */
+    public boolean isConfermato() {
+        return confermato;
+    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        // Usa il Look and Feel di default (Metal) per preservare i colori impostati nel codice
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            javax.swing.UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmScorte().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new frmScorte("COMPRA", "Test").setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

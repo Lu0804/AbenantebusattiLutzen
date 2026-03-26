@@ -29,6 +29,45 @@ public class Logica {
         gfk.creaFileKey();
     }
 
+    /**
+     * Carica tutti i prodotti dal file binario e li mette nella tabella e nell'hashmap.
+     * Viene chiamato all'avvio per ripristinare i dati salvati.
+     */
+    public void caricaDaFile(DefaultTableModel modelTabella) {
+        modelTabella.setRowCount(0); // pulisce eventuali righe residue
+
+        try (java.io.RandomAccessFile file = new java.io.RandomAccessFile("elencoProdotti.pdm", "r")) {
+            int DIM_RECORD = 64;
+            int nRecord = (int) (file.length() / DIM_RECORD);
+
+            for (int i = 0; i < nRecord; i++) {
+                file.seek((long) i * DIM_RECORD);
+                int    id        = file.readInt();
+                String nome      = controllo.leggiStringaDalFile(file);
+                int    vendita   = file.readInt();
+                int    acquisto  = file.readInt();
+                int    scorta    = file.readInt();
+                int    scortaMin = file.readInt();
+                int    nVenduti  = file.readInt();
+
+                // Salta record con id = -1 (tombstone)
+                if (id == -1) continue;
+
+                // Aggiunge in memoria solo se non già presente
+                if (!magazzino.esisteIdProdotto(id)) {
+                    Prodotto p = new Prodotto(id, nome, vendita, acquisto, scorta, scortaMin, nVenduti);
+                    magazzino.aggiungiAlMagazzino(id, p);
+                    modelTabella.addRow(new Object[]{id, nome, acquisto, vendita, scorta, scortaMin});
+                }
+            }
+            System.out.println("Caricati " + modelTabella.getRowCount() + " prodotti dal file.");
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("File prodotti non trovato, partenza con magazzino vuoto.");
+        } catch (java.io.IOException e) {
+            System.out.println("Errore lettura file prodotti: " + e.getMessage());
+        }
+    }
+
     // ── AGGIUNGI ──────────────────────────────────────────────
 
     /**
@@ -55,6 +94,11 @@ public class Logica {
             return "ERRORE: ID, prezzi e scorte devono essere numeri interi.";
         }
 
+        // Qui verifichi che il nome sia una stringa e non un numero
+        if (!controllo.controlloString(nome)) {
+            return "ERRORE: Il nome del prodotto non può essere un numero.";
+        }
+
         // Qui converti le stringhe in int ora che sei sicuro siano validi
         int id        = Integer.parseInt(idStr);
         int acquisto  = Integer.parseInt(acqStr);
@@ -65,6 +109,16 @@ public class Logica {
         // Qui controlli che l'ID non esista già nel Magazzino in memoria
         if (magazzino.esisteIdProdotto(id)) {
             return "ERRORE: Esiste già un prodotto con ID " + id + ".";
+        }
+
+        // Qui controlli che il prezzo di vendita sia maggiore del prezzo di acquisto
+        if (vendita <= acquisto) {
+            return "ERRORE: Il prezzo di vendita deve essere maggiore del prezzo di acquisto.";
+        }
+
+        // Qui controlli che la scorta minima sia positiva
+        if (scortaMin <= 0) {
+            return "ERRORE: La scorta minima deve essere maggiore di zero.";
         }
 
         // Qui crei il Prodotto con nVenduti = 0 (nuovo prodotto appena inserito)
@@ -95,10 +149,19 @@ public class Logica {
             return "ERRORE: Nessun prodotto da salvare.";
         }
 
+        // Cancella e ricrea i file prima di riscrivere tutto
+        try {
+            new java.io.File("elencoProdotti.pdm").delete();
+            new java.io.File("chiavi.txt").delete();
+        } catch (Exception e) {
+            System.out.println("Avviso pulizia file: " + e.getMessage());
+        }
+        gfm.creaFileProdotti();
+        gfk.creaFileKey();
+
         // Qui scorri ogni riga della tabella e scrivi il record sul file
         for (int i = 0; i < modelTabella.getRowCount(); i++) {
 
-            // Qui leggi i valori di ogni cella della riga corrente
             int    id        = (int)    modelTabella.getValueAt(i, 0);
             String nome      = (String) modelTabella.getValueAt(i, 1);
             int    acquisto  = (int)    modelTabella.getValueAt(i, 2);
@@ -106,10 +169,13 @@ public class Logica {
             int    scorta    = (int)    modelTabella.getValueAt(i, 4);
             int    scortaMin = (int)    modelTabella.getValueAt(i, 5);
 
-            // Qui scrivi il record nel file binario elencoProdotti.pdm
-            gfm.inserisciProdotto(id, nome, vendita, acquisto, scorta, scortaMin, 0);
+            // Cerca nVenduti dal Magazzino in memoria
+            int nVenduti = 0;
+            for (Prodotto p : magazzino.getProdotti()) {
+                if (p.getId() == id) { nVenduti = p.getnVenduti(); break; }
+            }
 
-            // Qui aggiungi la coppia (id → posizione i) nel file chiavi.txt
+            gfm.inserisciProdotto(id, nome, vendita, acquisto, scorta, scortaMin, nVenduti);
             gfk.aggiungiChiave(id, i);
         }
 
@@ -184,6 +250,151 @@ public class Logica {
                 "═══════════════════════════════";
     }
 
+    // ── VENDI ─────────────────────────────────────────────────
+
+    /**
+     * Scala la scorta del prodotto selezionato della quantità indicata.
+     * Qui controlli che la scorta non scenda sotto il minimo prima di procedere.
+     *
+     * @return messaggio di esito
+     */
+    public String vendiProdotto(int riga, int quantita, DefaultTableModel modelTabella) {
+        if (quantita <= 0) return "ERRORE: La quantità deve essere maggiore di zero.";
+
+        int scorta    = (int) modelTabella.getValueAt(riga, 4);
+        int scortaMin = (int) modelTabella.getValueAt(riga, 5);
+        int nuovaScorta = scorta - quantita;
+
+        // Qui blocchi la vendita se la nuova scorta andrebbe sotto il minimo
+        if (nuovaScorta < scortaMin) {
+            return "ERRORE: Non puoi vendere " + quantita + " pezzi. Le scorte scenderebbero a "
+                 + nuovaScorta + ", sotto il minimo di " + scortaMin
+                 + ". Devi prima comprare scorte!";
+        }
+
+        // Qui aggiorni la cella Giacenza nella tabella
+        modelTabella.setValueAt(nuovaScorta, riga, 4);
+
+        // Qui aggiorni anche scorta e nVenduti nel Magazzino in memoria
+        int id = (int) modelTabella.getValueAt(riga, 0);
+        for (Prodotto p : magazzino.getProdotti()) {
+            if (p.getId() == id) {
+                p.setScorta(nuovaScorta);
+                p.setnVenduti(p.getnVenduti() + quantita);
+                break;
+            }
+        }
+
+        return "OK: Vendita di " + quantita + " pezzi registrata. Scorta attuale: " + nuovaScorta + ".";
+    }
+
+    // ── COMPRA ────────────────────────────────────────────────
+
+    /**
+     * Aumenta la scorta del prodotto selezionato della quantità indicata.
+     * Qui non ci sono vincoli minimi: si possono sempre comprare scorte.
+     *
+     * @return messaggio di esito
+     */
+    public String compraProdotto(int riga, int quantita, DefaultTableModel modelTabella) {
+        if (quantita <= 0) return "ERRORE: La quantità deve essere maggiore di zero.";
+
+        int scorta = (int) modelTabella.getValueAt(riga, 4);
+        int nuovaScorta = scorta + quantita;
+
+        // Qui aggiorni la cella Giacenza nella tabella
+        modelTabella.setValueAt(nuovaScorta, riga, 4);
+
+        // Qui aggiorni anche la scorta nel Magazzino in memoria
+        int id = (int) modelTabella.getValueAt(riga, 0);
+        for (Prodotto p : magazzino.getProdotti()) {
+            if (p.getId() == id) {
+                p.setScorta(nuovaScorta);
+                break;
+            }
+        }
+
+        return "OK: Acquisto di " + quantita + " pezzi registrato. Scorta attuale: " + nuovaScorta + ".";
+    }
+
+    // ── STATISTICHE ───────────────────────────────────────────
+
+    /**
+     * Calcola tutte le statistiche dal modelTabella e dal Magazzino in memoria.
+     * Qui restituisci un array di 8 stringhe pronte per le label:
+     * [0] prodottiDiversi, [1] totPezzi, [2] valoreMagazzino, [3] margine,
+     * [4] piuVenduto, [5] menoVenduto, [6] piuCostoso, [7] menoCostoso
+     */
+    public String[] getStatistiche(DefaultTableModel modelTabella) {
+        if (modelTabella.getRowCount() == 0) {
+            return new String[]{"0", "0", "0 €", "0 €", "—", "—", "—", "—"};
+        }
+
+        int totPezzi = 0, valoreMagazzino = 0, margine = 0;
+        int maxVenduti = Integer.MIN_VALUE, minVenduti = Integer.MAX_VALUE;
+        int maxCosto   = Integer.MIN_VALUE, minCosto   = Integer.MAX_VALUE;
+        String piuVenduto = "—", menoVenduto = "—", piuCostoso = "—", menoCostoso = "—";
+
+        // Qui scorri ogni riga della tabella e accumuli i valori
+        for (int i = 0; i < modelTabella.getRowCount(); i++) {
+            int    id       = (int)    modelTabella.getValueAt(i, 0);
+            String nome     = (String) modelTabella.getValueAt(i, 1);
+            int    acquisto = (int)    modelTabella.getValueAt(i, 2);
+            int    vendita  = (int)    modelTabella.getValueAt(i, 3);
+            int    scorta   = (int)    modelTabella.getValueAt(i, 4);
+
+            totPezzi        += scorta;
+            valoreMagazzino += acquisto * scorta;
+            margine         += (vendita - acquisto) * scorta;
+
+            // Qui cerchi il prodotto in memoria per leggere nVenduti (non è in tabella)
+            int nVenduti = 0;
+            for (Prodotto p : magazzino.getProdotti()) {
+                if (p.getId() == id) { nVenduti = p.getnVenduti(); break; }
+            }
+
+            if (nVenduti > maxVenduti) { maxVenduti = nVenduti; piuVenduto  = nome; }
+            if (nVenduti < minVenduti) { minVenduti = nVenduti; menoVenduto = nome; }
+            if (vendita  > maxCosto)   { maxCosto   = vendita;  piuCostoso  = nome; }
+            if (vendita  < minCosto)   { minCosto   = vendita;  menoCostoso = nome; }
+        }
+
+        return new String[]{
+            String.valueOf(modelTabella.getRowCount()),
+            String.valueOf(totPezzi),
+            valoreMagazzino + " €",
+            margine + " €",
+            piuVenduto,
+            menoVenduto,
+            piuCostoso,
+            menoCostoso
+        };
+    }
+
+    // ── ALLARME SCORTE ────────────────────────────────────────
+
+    /**
+     * Restituisce le righe dei prodotti la cui scorta è <= scorta minima.
+     * Qui le usi per popolare jTable4 nella scheda statistiche.
+     */
+    public ArrayList<Object[]> getProdottiSottoScorta(DefaultTableModel modelTabella) {
+        ArrayList<Object[]> lista = new ArrayList<>();
+        for (int i = 0; i < modelTabella.getRowCount(); i++) {
+            int scorta    = (int) modelTabella.getValueAt(i, 4);
+            int scortaMin = (int) modelTabella.getValueAt(i, 5);
+            // Qui includi il prodotto solo se è sotto o uguale al minimo
+            if (scorta <= scortaMin) {
+                lista.add(new Object[]{
+                    modelTabella.getValueAt(i, 0), // ID
+                    modelTabella.getValueAt(i, 1), // Nome
+                    scorta,
+                    scortaMin
+                });
+            }
+        }
+        return lista;
+    }
+
     // ── UTILITÀ ───────────────────────────────────────────────
 
     /**
@@ -193,148 +404,4 @@ public class Logica {
     public ArrayList<Prodotto> getProdotti() {
         return new ArrayList<>(magazzino.getProdotti());
     }
-    // ── VENDI ─────────────────────────────────────────────────
-
-/**
- * Scala la scorta del prodotto selezionato della quantità indicata.
- * Qui controlli che la scorta non scenda sotto il minimo prima di procedere.
- *
- * @return messaggio di esito
- */
-public String vendiProdotto(int riga, int quantita, DefaultTableModel modelTabella) {
-    if (quantita <= 0) return "ERRORE: La quantità deve essere maggiore di zero.";
-
-    int scorta    = (int) modelTabella.getValueAt(riga, 4);
-    int scortaMin = (int) modelTabella.getValueAt(riga, 5);
-    int nuovaScorta = scorta - quantita;
-
-    // Qui blocchi la vendita se la nuova scorta andrebbe sotto il minimo
-    if (nuovaScorta < scortaMin) {
-        return "ERRORE: Non puoi vendere " + quantita + " pezzi. Le scorte scenderebbero a "
-             + nuovaScorta + ", sotto il minimo di " + scortaMin
-             + ". Devi prima comprare scorte!";
-    }
-
-    // Qui aggiorni la cella Giacenza nella tabella
-    modelTabella.setValueAt(nuovaScorta, riga, 4);
-
-    // Qui aggiorni anche scorta e nVenduti nel Magazzino in memoria
-    int id = (int) modelTabella.getValueAt(riga, 0);
-    for (Prodotto p : magazzino.getProdotti()) {
-        if (p.getId() == id) {
-            p.setScorta(nuovaScorta);
-            p.setnVenduti(p.getnVenduti() + quantita);
-            break;
-        }
-    }
-
-    return "OK: Vendita di " + quantita + " pezzi registrata. Scorta attuale: " + nuovaScorta + ".";
-}
-
-// ── COMPRA ────────────────────────────────────────────────
-
-/**
- * Aumenta la scorta del prodotto selezionato della quantità indicata.
- * Qui non ci sono vincoli minimi: si possono sempre comprare scorte.
- *
- * @return messaggio di esito
- */
-public String compraProdotto(int riga, int quantita, DefaultTableModel modelTabella) {
-    if (quantita <= 0) return "ERRORE: La quantità deve essere maggiore di zero.";
-
-    int scorta = (int) modelTabella.getValueAt(riga, 4);
-    int nuovaScorta = scorta + quantita;
-
-    // Qui aggiorni la cella Giacenza nella tabella
-    modelTabella.setValueAt(nuovaScorta, riga, 4);
-
-    // Qui aggiorni anche la scorta nel Magazzino in memoria
-    int id = (int) modelTabella.getValueAt(riga, 0);
-    for (Prodotto p : magazzino.getProdotti()) {
-        if (p.getId() == id) {
-            p.setScorta(nuovaScorta);
-            break;
-        }
-    }
-
-    return "OK: Acquisto di " + quantita + " pezzi registrato. Scorta attuale: " + nuovaScorta + ".";
-}
-
-// ── STATISTICHE ───────────────────────────────────────────
-
-/**
- * Calcola tutte le statistiche dal modelTabella e dal Magazzino in memoria.
- * Qui restituisci un array di 8 stringhe pronte per le label:
- * [0] prodottiDiversi, [1] totPezzi, [2] valoreMagazzino, [3] margine,
- * [4] piuVenduto, [5] menoVenduto, [6] piuCostoso, [7] menoCostoso
- */
-public String[] getStatistiche(DefaultTableModel modelTabella) {
-    if (modelTabella.getRowCount() == 0) {
-        return new String[]{"0", "0", "0 €", "0 €", "—", "—", "—", "—"};
-    }
-
-    int totPezzi = 0, valoreMagazzino = 0, margine = 0;
-    int maxVenduti = Integer.MIN_VALUE, minVenduti = Integer.MAX_VALUE;
-    int maxCosto   = Integer.MIN_VALUE, minCosto   = Integer.MAX_VALUE;
-    String piuVenduto = "—", menoVenduto = "—", piuCostoso = "—", menoCostoso = "—";
-
-    // Qui scorri ogni riga della tabella e accumuli i valori
-    for (int i = 0; i < modelTabella.getRowCount(); i++) {
-        int    id       = (int)    modelTabella.getValueAt(i, 0);
-        String nome     = (String) modelTabella.getValueAt(i, 1);
-        int    acquisto = (int)    modelTabella.getValueAt(i, 2);
-        int    vendita  = (int)    modelTabella.getValueAt(i, 3);
-        int    scorta   = (int)    modelTabella.getValueAt(i, 4);
-
-        totPezzi        += scorta;
-        valoreMagazzino += acquisto * scorta;
-        margine         += (vendita - acquisto) * scorta;
-
-        // Qui cerchi il prodotto in memoria per leggere nVenduti (non è in tabella)
-        int nVenduti = 0;
-        for (Prodotto p : magazzino.getProdotti()) {
-            if (p.getId() == id) { nVenduti = p.getnVenduti(); break; }
-        }
-
-        if (nVenduti > maxVenduti) { maxVenduti = nVenduti; piuVenduto  = nome; }
-        if (nVenduti < minVenduti) { minVenduti = nVenduti; menoVenduto = nome; }
-        if (vendita  > maxCosto)   { maxCosto   = vendita;  piuCostoso  = nome; }
-        if (vendita  < minCosto)   { minCosto   = vendita;  menoCostoso = nome; }
-    }
-
-    return new String[]{
-        String.valueOf(modelTabella.getRowCount()),
-        String.valueOf(totPezzi),
-        valoreMagazzino + " €",
-        margine + " €",
-        piuVenduto,
-        menoVenduto,
-        piuCostoso,
-        menoCostoso
-    };
-}
-
-// ── ALLARME SCORTE ────────────────────────────────────────
-
-/**
- * Restituisce le righe dei prodotti la cui scorta è <= scorta minima.
- * Qui le usi per popolare jTable4 nella scheda statistiche.
- */
-public ArrayList<Object[]> getProdottiSottoScorta(DefaultTableModel modelTabella) {
-    ArrayList<Object[]> lista = new ArrayList<>();
-    for (int i = 0; i < modelTabella.getRowCount(); i++) {
-        int scorta    = (int) modelTabella.getValueAt(i, 4);
-        int scortaMin = (int) modelTabella.getValueAt(i, 5);
-        // Qui includi il prodotto solo se è sotto o uguale al minimo
-        if (scorta <= scortaMin) {
-            lista.add(new Object[]{
-                modelTabella.getValueAt(i, 0), // ID
-                modelTabella.getValueAt(i, 1), // Nome
-                scorta,
-                scortaMin
-            });
-        }
-    }
-    return lista;
-}
 }

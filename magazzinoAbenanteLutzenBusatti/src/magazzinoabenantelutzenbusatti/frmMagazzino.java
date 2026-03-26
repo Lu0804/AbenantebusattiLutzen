@@ -4,39 +4,80 @@
  */
 package magazzinoabenantelutzenbusatti;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author busatti.mattia
  */
 public class frmMagazzino extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmMagazzino.class.getName());
-// Qui dichiari la Logica — unico punto di contatto con tutta la business logic
-private Logica l = new Logica();
 
-// Qui dichiari il modello dinamico della tabella per poter aggiungere/rimuovere righe
-private javax.swing.table.DefaultTableModel modelTabella;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmMagazzino.class.getName());
+ // Qui dichiari la Logica — unico punto di contatto con tutta la business logic
+    private Logica l = new Logica();
+ 
+    // Qui dichiari il modello dinamico della tabella per poter aggiungere/rimuovere righe
+    private javax.swing.table.DefaultTableModel modelTabella;
+    
+    // Qui dichiari il modello per la tabella degli allarmi scorte
+    private javax.swing.table.DefaultTableModel modelAllarmi;
+
     /**
      * Creates new form frmMagazzino
      */
-    public frmMagazzino() {
+  public frmMagazzino() {
     initComponents();
     l.inizializza();
 
-    // Qui crei il modello tabella con le 6 colonne e 0 righe iniziali,
-    // sovrascrivendo il modello statico generato da NetBeans
-    modelTabella = new javax.swing.table.DefaultTableModel(
-        new String[]{"ID Prodotto", "Nome Prodotto", "P.Acquisto",
-                     "P.Vendita", "Giacenza", "Scorta Minima"}, 0
-    ) {
-        // Qui blocchi la modifica diretta delle celle dall'utente
-        @Override
-        public boolean isCellEditable(int row, int column) { return false; }
-    };
+    modelTabella = (javax.swing.table.DefaultTableModel) tblGenerale.getModel();
+    modelAllarmi = (javax.swing.table.DefaultTableModel) jTable4.getModel();
 
-    // Qui assegni il modello dinamico alla tblGenerale
-    tblGenerale.setModel(modelTabella);
+    // AGGIUNGI QUESTE DUE RIGHE — elimina le righe null generate da NetBeans
+    modelTabella.setRowCount(0);
+    modelAllarmi.setRowCount(0);
+
+    // Carica i prodotti salvati in precedenza
+    l.caricaDaFile(modelTabella);
+
+    jTabbedPane1.addChangeListener(e -> {
+        if (jTabbedPane1.getSelectedIndex() == 1) {
+            aggiornaStatistiche();
+            aggiornaAllarmiScorte();
+        }
+    });
 }
+ /**
+     * Aggiorna tutte le label delle statistiche chiamando Logica
+     */
+    private void aggiornaStatistiche() {
+        String[] stats = l.getStatistiche(modelTabella);
+        
+        lblProdottiDiversi.setText(stats[0]);
+        lblTotPezzi.setText(stats[1]);
+        lblValoreMagazzino.setText(stats[2]);
+        jLabel15.setText(stats[3]); // margine (se hai questa label)
+        lblPiuVenduto.setText(stats[4]);
+        lblMenoVenduto.setText(stats[5]);
+        lblPiuCostoso.setText(stats[6]);
+        lblMenoCostoso.setText(stats[7]);
+    }
+  
+        /**
+     * Aggiorna la tabella degli allarmi scorte (prodotti sotto scorta minima)
+     */
+    private void aggiornaAllarmiScorte() {
+        // Qui svuoti la tabella allarmi
+        modelAllarmi.setRowCount(0);
+        
+        // Qui ottieni i prodotti sotto scorta da Logica
+        ArrayList<Object[]> prodottiSottoScorta = l.getProdottiSottoScorta(modelTabella);
+        
+        // Qui aggiungi ogni prodotto alla tabella allarmi
+        for (Object[] riga : prodottiSottoScorta) {
+            modelAllarmi.addRow(riga);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,14 +112,12 @@ private javax.swing.table.DefaultTableModel modelTabella;
         btnCerca = new javax.swing.JButton();
         btnElimina = new javax.swing.JButton();
         btnAggiungi = new javax.swing.JButton();
-        btnSalvaModifiche = new javax.swing.JButton();
         btnVendi = new javax.swing.JButton();
         btnCompra = new javax.swing.JButton();
+        btnSalva = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblGenerale = new javax.swing.JTable();
-        jLabel7 = new javax.swing.JLabel();
-        lblCerca = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -173,7 +212,7 @@ private javax.swing.table.DefaultTableModel modelTabella;
         jLabel6.setForeground(new java.awt.Color(45, 45, 45));
         jLabel6.setText("Scorte Minime");
 
-        btnCerca.setBackground(new java.awt.Color(108, 117, 125));
+        btnCerca.setBackground(new java.awt.Color(17, 122, 139));
         btnCerca.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnCerca.setForeground(new java.awt.Color(255, 255, 255));
         btnCerca.setText("CERCA");
@@ -203,16 +242,6 @@ private javax.swing.table.DefaultTableModel modelTabella;
             }
         });
 
-        btnSalvaModifiche.setBackground(new java.awt.Color(17, 122, 139));
-        btnSalvaModifiche.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnSalvaModifiche.setForeground(new java.awt.Color(255, 255, 255));
-        btnSalvaModifiche.setText("SALVA MODIFICHE");
-        btnSalvaModifiche.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvaModificheActionPerformed(evt);
-            }
-        });
-
         btnVendi.setBackground(new java.awt.Color(217, 83, 79));
         btnVendi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnVendi.setForeground(new java.awt.Color(255, 255, 255));
@@ -233,6 +262,16 @@ private javax.swing.table.DefaultTableModel modelTabella;
             }
         });
 
+        btnSalva.setBackground(new java.awt.Color(17, 122, 139));
+        btnSalva.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnSalva.setForeground(new java.awt.Color(255, 255, 255));
+        btnSalva.setText("SALVA MODIFICHE");
+        btnSalva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -241,6 +280,7 @@ private javax.swing.table.DefaultTableModel modelTabella;
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(0, 16, Short.MAX_VALUE)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
@@ -256,23 +296,18 @@ private javax.swing.table.DefaultTableModel modelTabella;
                             .addComponent(lblPrezzoVendita)
                             .addComponent(lblNumeroScorte)
                             .addComponent(lblScorteMinime, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(22, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(btnVendi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnElimina, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnAggiungi, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(102, 102, 102)))
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCerca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnVendi, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                            .addComponent(btnAggiungi, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                             .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(21, 21, 21))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnElimina, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCerca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSalva, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
+                        .addGap(43, 43, 43))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -302,18 +337,18 @@ private javax.swing.table.DefaultTableModel modelTabella;
                     .addComponent(jLabel6)
                     .addComponent(lblScorteMinime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnSalva, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAggiungi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnVendi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnElimina, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvaModifiche, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVendi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnElimina, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCerca, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(btnCerca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Elenco Prodotti Completo", 0, 0, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(4, 58, 114)));
@@ -332,34 +367,20 @@ private javax.swing.table.DefaultTableModel modelTabella;
         ));
         jScrollPane2.setViewportView(tblGenerale);
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(45, 45, 45));
-        jLabel7.setText("Cerca");
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel7)
-                        .addGap(36, 36, 36)
-                        .addComponent(lblCerca, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(lblCerca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                .addGap(44, 44, 44)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -369,10 +390,10 @@ private javax.swing.table.DefaultTableModel modelTabella;
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -585,98 +606,119 @@ private javax.swing.table.DefaultTableModel modelTabella;
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAggiungiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAggiungiActionPerformed
-           // Qui deleghi tutta la validazione e l'inserimento alla Logica
-    String esito = l.aggiungiProdotto(
-        lblID.getText().trim(),
-        lblNomeProdotto.getText().trim(),
-        lblPrezzoAcquisto.getText().trim(),
-        lblPrezzoVendita.getText().trim(),
-        lblNumeroScorte.getText().trim(),
-        lblScorteMinime.getText().trim(),
-        modelTabella
-    );
-
-    // Qui mostri il messaggio ripulito dal prefisso OK/ERRORE
-    mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
-
-    // Qui pulisci i campi solo se l'operazione è andata a buon fine
-    if (esito.startsWith("OK")) {
-        lblID.setText("");
-        lblNomeProdotto.setText("");
-        lblPrezzoAcquisto.setText("");
-        lblPrezzoVendita.setText("");
-        lblNumeroScorte.setText("");
-        lblScorteMinime.setText("");
-    }
-
+         // Qui deleghi tutta la validazione e l'inserimento alla Logica
+        String esito = l.aggiungiProdotto(
+            lblID.getText().trim(),
+            lblNomeProdotto.getText().trim(),
+            lblPrezzoAcquisto.getText().trim(),
+            lblPrezzoVendita.getText().trim(),
+            lblNumeroScorte.getText().trim(),
+            lblScorteMinime.getText().trim(),
+            modelTabella
+        );
+ 
+        // Qui mostri il messaggio ripulito dal prefisso OK/ERRORE
+        mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
+ 
+        // Qui pulisci i campi solo se l'operazione è andata a buon fine
+        if (esito.startsWith("OK")) {
+            lblID.setText("");
+            lblNomeProdotto.setText("");
+            lblPrezzoAcquisto.setText("");
+            lblPrezzoVendita.setText("");
+            lblNumeroScorte.setText("");
+            lblScorteMinime.setText("");
+        }
     }//GEN-LAST:event_btnAggiungiActionPerformed
 
     private void btnEliminaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminaActionPerformed
-        // Qui passi alla Logica la riga selezionata e il modello tabella
-    String esito = l.eliminaProdotto(tblGenerale.getSelectedRow(), modelTabella);
-    mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
+      // Qui passi alla Logica la riga selezionata e il modello tabella
+        String esito = l.eliminaProdotto(tblGenerale.getSelectedRow(), modelTabella);
+        mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
     }//GEN-LAST:event_btnEliminaActionPerformed
 
-    private void btnSalvaModificheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvaModificheActionPerformed
-        // Qui deleghi il salvataggio su file alla Logica
-    String esito = l.salvaTutti(modelTabella);
-    mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
-    }//GEN-LAST:event_btnSalvaModificheActionPerformed
-
-    private void btnCercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCercaActionPerformed
-        // Qui chiedi alla Logica la stringa formattata con i dettagli del prodotto selezionato
-    String dettagli = l.getDettagliProdotto(tblGenerale.getSelectedRow(), modelTabella);
-
-    if (dettagli == null) {
-        // Qui avvisi se nessuna riga era selezionata
-        mostraMessaggio("Seleziona un prodotto dalla tabella per vederne i dettagli.");
+    private void btnVendiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendiActionPerformed
+      //Qui controlli che sia selezionato un prodotto
+        int rigaSelezionata = tblGenerale.getSelectedRow();
+        if (rigaSelezionata == -1) {
+            mostraMessaggio("Seleziona un prodotto dalla tabella prima di vendere.");
+            return;
+        }
+        
+        // Qui ottieni il nome del prodotto per passarlo al dialog
+        String nomeProdotto = (String) modelTabella.getValueAt(rigaSelezionata, 1);
+        
+        // Qui apri il dialog frmScorte passando "VENDI" e il nome prodotto
+        frmScorte fms = new frmScorte("VENDI", nomeProdotto);
+        fms.setVisible(true);
+        
+        // Qui aspetti che l'utente chiuda il dialog e controlli se ha confermato
+        if (fms.isConfermato()) {
+            int quantita = fms.getQuantita();
+            // Qui deleghi alla Logica la vendita
+            String esito = l.vendiProdotto(rigaSelezionata, quantita, modelTabella);
+            mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
+        }
+    }//GEN-LAST:event_btnVendiActionPerformed
+private void btnCercaActionPerformed(java.awt.event.ActionEvent evt) {
+    int rigaSelezionata = tblGenerale.getSelectedRow();
+    if (rigaSelezionata == -1) {
+        mostraMessaggio("Seleziona un prodotto dalla tabella prima di cercare.");
         return;
     }
-
-    // Qui mostri la scheda prodotto con il nome come titolo del dialog
-    String nome = (String) modelTabella.getValueAt(tblGenerale.getSelectedRow(), 1);
-    javax.swing.JOptionPane.showMessageDialog(this, dettagli,
-        "Scheda Prodotto - " + nome, javax.swing.JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_btnCercaActionPerformed
-
-    private void btnVendiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendiActionPerformed
-         frmScorte fms=new frmScorte();
-        fms.setVisible(true);
-    }//GEN-LAST:event_btnVendiActionPerformed
-
-    private void btnCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompraActionPerformed
-        frmScorte fms=new frmScorte();
-        fms.setVisible(true);
-    }//GEN-LAST:event_btnCompraActionPerformed
-/**
- * Qui mostri un JOptionPane standard, come nel progetto di esempio.
- * Così non ripeti la stessa riga in ogni handler.
- */
-private void mostraMessaggio(String msg) {
-    javax.swing.JOptionPane.showMessageDialog(this, msg);
+    String dettagli = l.getDettagliProdotto(rigaSelezionata, modelTabella);
+    if (dettagli != null) {
+        mostraMessaggio(dettagli);
+    }
 }
+    private void btnCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompraActionPerformed
+     // Qui controlli che sia selezionato un prodotto
+        int rigaSelezionata = tblGenerale.getSelectedRow();
+        if (rigaSelezionata == -1) {
+            mostraMessaggio("Seleziona un prodotto dalla tabella prima di comprare.");
+            return;  }
+        
+        // Qui ottieni il nome del prodotto per passarlo al dialog
+        String nomeProdotto = (String) modelTabella.getValueAt(rigaSelezionata, 1);
+        
+        // Qui apri il dialog frmScorte passando "COMPRA" e il nome prodotto
+        frmScorte fms = new frmScorte("COMPRA", nomeProdotto);
+        fms.setVisible(true);
+        
+        // Qui aspetti che l'utente chiuda il dialog e controlli se ha confermato
+        if (fms.isConfermato()) {
+            int quantita = fms.getQuantita();
+            // Qui deleghi alla Logica l'acquisto
+            String esito = l.compraProdotto(rigaSelezionata, quantita, modelTabella);
+            mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
+        }
+    }//GEN-LAST:event_btnCompraActionPerformed
+
+    private void btnSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvaActionPerformed
+         // Qui deleghi il salvataggio su file alla Logica
+        String esito = l.salvaTutti(modelTabella);
+        mostraMessaggio(esito.replace("OK: ", "").replace("ERRORE: ", ""));
+    }//GEN-LAST:event_btnSalvaActionPerformed
+
+  /**
+     * Qui mostri un JOptionPane standard, come nel progetto di esempio.
+     * Così non ripeti la stessa riga in ogni handler.
+     */
+    private void mostraMessaggio(String msg) {
+        javax.swing.JOptionPane.showMessageDialog(this, msg);
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        // Usa il Look and Feel di default (Metal) per preservare i colori impostati nel codice
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            javax.swing.UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new frmMagazzino().setVisible(true));
     }
 
@@ -685,7 +727,7 @@ private void mostraMessaggio(String msg) {
     private javax.swing.JButton btnCerca;
     private javax.swing.JButton btnCompra;
     private javax.swing.JButton btnElimina;
-    private javax.swing.JButton btnSalvaModifiche;
+    private javax.swing.JButton btnSalva;
     private javax.swing.JButton btnVendi;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -700,7 +742,6 @@ private void mostraMessaggio(String msg) {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -720,7 +761,6 @@ private void mostraMessaggio(String msg) {
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField lblCerca;
     private javax.swing.JTextField lblID;
     private javax.swing.JLabel lblMenoCostoso;
     private javax.swing.JLabel lblMenoVenduto;
@@ -736,6 +776,4 @@ private void mostraMessaggio(String msg) {
     private javax.swing.JLabel lblValoreMagazzino;
     private javax.swing.JTable tblGenerale;
     // End of variables declaration//GEN-END:variables
-
 }
-
